@@ -1,0 +1,7 @@
+name: SpawnBlazer
+main: com.github.intangir.SpawnBlazer.SpawnBlazer
+version: 1.0
+load: startup
+description: Replaces spawners in hell biome with blaze spawner
+author: Intangir
+
