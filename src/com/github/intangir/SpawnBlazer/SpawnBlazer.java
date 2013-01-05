@@ -11,7 +11,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,28 +40,30 @@ public class SpawnBlazer extends JavaPlugin implements Listener
 		ProcessChunk(e.getChunk());
 	}
 
-	@EventHandler(ignoreCancelled=true)
-	public void onChunkPopulate(ChunkPopulateEvent e)
-	{
-		ProcessChunk(e.getChunk());
-	}
-
 	public void ProcessChunk(Chunk c)
 	{
-		for (BlockState state: c.getTileEntities())
+		try
 		{
-			if(state instanceof CreatureSpawner)
+			for (BlockState state: c.getTileEntities())
 			{
-				if(state.getBlock().getBiome() == Biome.HELL)
+				if(state instanceof CreatureSpawner)
 				{
-					EntityType et = ((CreatureSpawner) state).getSpawnedType();
-					if(et == EntityType.ZOMBIE || et == EntityType.SKELETON)
+					if(state.getBlock().getBiome() == Biome.HELL)
 					{
-						((CreatureSpawner) state).setSpawnedType(EntityType.BLAZE);
-						log.info("Changed spawner to blaze at " + state.getBlock().getX() + " " +  state.getBlock().getY() + " " + state.getBlock().getZ());
+						EntityType et = ((CreatureSpawner) state).getSpawnedType();
+						if(et == EntityType.ZOMBIE || et == EntityType.SKELETON)
+						{
+							((CreatureSpawner) state).setSpawnedType(EntityType.BLAZE);
+							log.info("Changed spawner to blaze at " + state.getBlock().getX() + " " +  state.getBlock().getY() + " " + state.getBlock().getZ());
+						}
 					}
 				}
 			}
+		}
+		catch(NullPointerException e)
+		{
+			log.info("Notified on buggy chunk at X:" + c.getX() + " Y:" + c.getZ());
+			return;
 		}
 	}
 }
